@@ -16,6 +16,7 @@ apply plugin: 'asakusafw'
 apply plugin: 'asakusafw-organizer'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 group = 'jp.hishidama.asakusafw'
 version = '0.0.1'
@@ -50,10 +51,24 @@ dependencies {
     }
 }
 
-uploadArchives {
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
     repositories {
-        mavenDeployer {
-            repository(url: "file:///tmp/asakusafw-tester-site")
+        maven {
+            url "$buildDir/../../mvnrepository"
         }
     }
 }
